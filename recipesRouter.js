@@ -4,20 +4,20 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
-// the `{recipesStorage: storage}` syntax uses destructuring
-// assignment to import `recipesStorage` and immediatley
-// rename it to `storage` inside this module.
-const {recipesStorage: storage} = require('./storage');
 
-// we're going to add some recipes to storage
+const {Recipes} = require('./models');
+
+// we're going to add some recipes to Recipes
 // so there's some data to look at
-storage.add('boiled white rice', ['1 cup white rice', '2 cups water', 'pinch of salt']);
-storage.add('milkshake', ['2 tbsp cocoa', '2 cups vanilla ice cream', '1 cup milk']);
+Recipes.create(
+  'boiled white rice', ['1 cup white rice', '2 cups water', 'pinch of salt']);
+Recipes.create(
+  'milkshake', ['2 tbsp cocoa', '2 cups vanilla ice cream', '1 cup milk']);
 
 // send back JSON representation of all recipes
 // on GET requests to root
 router.get('/', (req, res) => {
-  res.json(storage.getItems());
+  res.json(Recipes.get());
 });
 
 
@@ -35,13 +35,13 @@ router.post('/', jsonParser, (req, res) => {
       return res.status(400).send(message);
     }
   }
-  const item = storage.add(req.body.name, req.body.ingredients);
+  const item = Recipes.create(req.body.name, req.body.ingredients);
   res.status(201).json(item);
 });
 
 // Delete recipes (by id)!
 router.delete('/:id', (req, res) => {
-  storage.deleteItem(req.params.id);
+  Recipes.delete(req.params.id);
   console.log(`Deleted shopping list item \`${req.params.ID}\``);
   res.status(204).end();
 });
@@ -50,7 +50,7 @@ router.delete('/:id', (req, res) => {
 // required fields. also ensure that recipe id in url path, and
 // recipe id in updated item object match. if problems with any
 // of that, log error and send back status code 400. otherwise
-// call `storage.updateItem` with updated recipe.
+// call `Recipes.updateItem` with updated recipe.
 router.put('/:id', jsonParser, (req, res) => {
   const requiredFields = ['name', 'ingredients', 'id'];
   for (let i=0; i<requiredFields.length; i++) {
@@ -69,7 +69,7 @@ router.put('/:id', jsonParser, (req, res) => {
     return res.status(400).send(message);
   }
   console.log(`Updating shopping list item \`${req.params.id}\``);
-  const updatedItem = storage.updateItem({
+  const updatedItem = Recipes.update({
     id: req.params.id,
     name: req.body.name,
     ingredients: req.body.ingredients
