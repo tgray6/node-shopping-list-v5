@@ -8,9 +8,9 @@ const {ShoppingList} = require('./models');
 
 // we're going to add some items to ShoppingList
 // so there's some data to look at
-ShoppingList.create('beans', true);
-ShoppingList.create('tomatoes', false);
-ShoppingList.create('peppers', false);
+ShoppingList.create('beans', 2);
+ShoppingList.create('tomatoes', 3);
+ShoppingList.create('peppers', 4);
 
 // when the root of this router is called with GET, return
 // all current ShoppingList items
@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 // add new item to ShoppingList and return it with a 201.
 router.post('/', jsonParser, (req, res) => {
   // ensure `name` and `budget` are in request body
-  const requiredFields = ['name', 'checked'];
+  const requiredFields = ['name', 'budget'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
