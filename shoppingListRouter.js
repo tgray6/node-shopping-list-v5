@@ -70,12 +70,12 @@ router.put('/:id', jsonParser, (req, res) => {
     return res.status(400).send(message);
   }
   console.log(`Updating shopping list item \`${req.params.id}\``);
-  const updatedItem = ShoppingList.update({
+  ShoppingList.update({
     id: req.params.id,
     name: req.body.name,
     checked: req.body.checked
   });
-  res.status(204).json(updatedItem);
+  res.status(204);
 })
 
 module.exports = router;
